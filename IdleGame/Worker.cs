@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace IdleGame {
     class Worker {
-        private int id;
-        private int exp;
-        private int speed = 5; //takes 5 gameticks to move 1 square
+        private int id; //idk what to use this for tbh
         public int x;
         public int y;
         private int mineralsCarrying = 0;
+        public int mineSpeed = 10; //how many minerals can they take at a time
+
 
         public Worker(int id, int x, int y) {
             this.x = x;
@@ -25,15 +25,17 @@ namespace IdleGame {
 
         public void Move(int distancex, int distancey) {
 
-            for (int i = 0; i < Program.world.MineralPoints.Count(); i++) {
+            for (int i = 0; i < Program.world.MineralPoints.Count(); i++) { //if theres a mineral patch at the location
                 if (x == Program.world.MineralPoints[i].x && y == Program.world.MineralPoints[i].y) {
-                    if (Program.world.MineralPoints[i].minerals > 0) {
-                        mineralsCarrying += 10;
-                        Program.world.MineralPoints[i].minerals -= 10;
+                    if (Program.world.MineralPoints[i].minerals > 0) { //mine minerals!
+                        mineralsCarrying += mineSpeed;
+                        Program.world.MineralPoints[i].minerals -= mineSpeed;
                     }
                 }
             }
 
+
+            //lazy boundary checks
             if (x < Program.world.radius && x > 0) {
                 x += distancex;
             }

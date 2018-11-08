@@ -9,9 +9,9 @@ using System.Threading;
 namespace IdleGame {
     class Program {
         public static int WorkerCount = 0;
-        public static readonly int MAX_WORKERS = 10;
+        public static int Workers = 10; //arbitrary number
 
-        public static Worker[] currentWorkers = new Worker[MAX_WORKERS];
+        public static Worker[] currentWorkers = new Worker[Workers];
 
         public static World world;
 
@@ -20,9 +20,10 @@ namespace IdleGame {
         }
 
         public static void InitGame() {
-            GenerateWorld(15, 5);
 
-            for (int i = 0; i < 10; i++) {
+            GenerateWorld(15, 5); //arbitrary numbers
+
+            for (int i = 0; i < Workers; i++) {
                 CreateWorker();
             }
             GenerateMinerals(world.MAX_MINERALPOINTS);
@@ -32,7 +33,7 @@ namespace IdleGame {
         public static void CreateWorker() {
             Random r = new Random();
             Worker w = new Worker(WorkerCount, r.Next(0, world.radius), r.Next(0, world.radius));
-            Thread.Sleep(100);
+            Thread.Sleep(100); //sleep to reset RNG
             currentWorkers[WorkerCount] = w;
             WorkerCount++;
         }
@@ -42,7 +43,7 @@ namespace IdleGame {
         }
 
 
-        public static void PrintInfo() {
+        public static void PrintInfo() { //printing info :)
             Console.WriteLine("Worker count: " + currentWorkers.Count());
             Console.WriteLine("World radius: " + world.radius + "x" + world.radius);
             Console.WriteLine("Mineral patches: ");
@@ -54,6 +55,12 @@ namespace IdleGame {
             foreach (Worker w in currentWorkers) {
                 Console.WriteLine(w.ToString());
             }
+            int totalMinerals = 0;
+            foreach (WorldPoint mp in world.MineralPoints) {
+                totalMinerals += mp.minerals;
+            }
+            Console.WriteLine("");
+            Console.WriteLine("Total Minerals on the field: " + totalMinerals);
         }
 
         public static void GenerateMinerals(int amount) {
@@ -64,6 +71,10 @@ namespace IdleGame {
                 int rx = r.Next(1, world.radius - 1);
                 int ry = r.Next(1, world.radius - 1);
                 world.SetMineralPoint(rx, ry);
+                //world.MineralPoints[i].minerals = 10; //for fast win
+                //========================
+                //this segment checks if any of the mineral patches are at the correct points, if theres no room for all the mineral points, it will run forever so rip
+                //
                 for (int j = 0; j < i; j++) {
                     if (rx == world.MineralPoints[j].x && ry == world.MineralPoints[j].y) {
                         while (nx == world.MineralPoints[j].x && ny == world.MineralPoints[j].y) {
@@ -82,26 +93,26 @@ namespace IdleGame {
             Random r = new Random();
             int mx = r.Next(-1, 2);
             int my = r.Next(-1, 2);
+
             while (true) {
+
                 PrintInfo();
+                foreach (WorldPoint mp in world.MineralPoints) {
+                    totalMinerals += mp.minerals;
+                }
 
                 foreach (Worker w in currentWorkers) {
                     mx = r.Next(-1, 2);
                     my = r.Next(-1, 2);
                     w.Move(mx, my);
-                    Thread.Sleep(20);
+                    Thread.Sleep(20); //small sleep to reset rng
                 }
-                Thread.Sleep(10); //represents a game tick
-                foreach (WorldPoint mp in world.MineralPoints) {
-                    totalMinerals += mp.minerals;
-                }
-                if (totalMinerals < 0) {
-
+                if (totalMinerals == 0) { //win?
                     break;
-
                 }
                 totalTicks++;
                 Console.Clear();
+                totalMinerals = 0; //reset to see the new actual total in the following tick
             }
             Console.WriteLine("GAME FINISHED");
             Console.WriteLine("Game ticks elapsed: " + totalTicks);
