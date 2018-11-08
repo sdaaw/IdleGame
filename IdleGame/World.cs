@@ -3,12 +3,12 @@
 
         public int radius;
 
-        public int MAX_MINERALPOINTS = 5;
+        public int MineralPatchCount = 5;
         public WorldPoint[] MineralPoints = new WorldPoint[0];
         private int mineralPointCount = 0;
 
-        public World(int radius, int MAX_MINERALPOINTS) {
-            MineralPoints = new WorldPoint[this.MAX_MINERALPOINTS];
+        public World(int radius, int MineralPatchCount) {
+            MineralPoints = new WorldPoint[this.MineralPatchCount];
             this.radius = radius;
         }
 

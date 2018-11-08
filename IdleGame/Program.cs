@@ -23,7 +23,7 @@ namespace IdleGame {
             for (int i = 0; i < Workers; i++) {
                 CreateWorker();
             }
-            GenerateMinerals(world.MAX_MINERALPOINTS);
+            GenerateMinerals(world.MineralPatchCount);
             Game();
         }
 
@@ -69,8 +69,9 @@ namespace IdleGame {
                 int ry = r.Next(1, world.radius - 1);
                 world.SetMineralPoint(rx, ry);
                 //world.MineralPoints[i].minerals = 10; //for fast win
-                //========================
-                //this segment checks if any of the mineral patches are at the correct points, if theres no room for all the mineral points, it will run forever so rip
+                // ========================
+                // this segment makes sure multiple mineralpatches dont spawn on top of eachother(have same coordinates)
+                // if theres no room for all the mineral points, it will run forever
                 //
                 for (int j = 0; j < i; j++) {
                     if (rx == world.MineralPoints[j].x && ry == world.MineralPoints[j].y) {
@@ -95,7 +96,7 @@ namespace IdleGame {
 
                 PrintInfo();
                 foreach (WorldPoint mp in world.MineralPoints) {
-                    totalMinerals += mp.minerals;
+                    totalMinerals += mp.minerals; 
                 }
 
                 foreach (Worker w in currentWorkers) {

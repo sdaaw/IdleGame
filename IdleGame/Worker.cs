@@ -10,8 +10,8 @@ namespace IdleGame {
 
 
         public Worker(int id, int x, int y) {
-            this.x = x;
-            this.y = y;
+            this.x = x; //spawn x
+            this.y = y; //spawn y
             this.id = id;
         }
 
